@@ -1,3 +1,5 @@
+QueasyCam cam;
+
 PImage BACKGROUND_IMAGE;
 
 color MORNING_COLOR = color(255, 144, 33);
@@ -8,18 +10,27 @@ float INTERPOLATION_STEP = 0.001;
 
 PShape SUN;
 
+PShape TERRAIN;
+
 boolean isMorning = false;
 
 float translationAngle = 0;
 
+float rotation = 0;
 
 void setup() {
-  size(768, 768, P3D);
+  fullScreen(P3D);
   BACKGROUND_IMAGE = loadImage("bg.jpg");
   BACKGROUND_IMAGE.resize(width, height);
-  SUN = createShape(SPHERE, 20);
+  TERRAIN = loadShape("medieval_house.obj");
+  TERRAIN.rotateX(PI);
+  TERRAIN.translate(width/2, height/2, 652);
+  SUN = createShape(SPHERE, 5);
   SUN.setTexture(loadImage("sun.jpg"));
   SUN.setStroke(false);
+  cam = new QueasyCam(this);
+  cam.position = new PVector(width/2, height/2 - 3, 650);
+  cam.controllable = false;
 }
 
 void draw() {
@@ -33,26 +44,28 @@ void draw() {
     interpolation += INTERPOLATION_STEP;
   }
   
-  translationAngle += 0.1;
+  translationAngle += 0.085;
 
   ambientLight(red(backgroundColor), green(backgroundColor), blue(backgroundColor));
   background(backgroundColor);
   tint(backgroundColor);
-  image(BACKGROUND_IMAGE, 0, 0);
   
   pushMatrix();
-  translate(width/2, height/2, 0);
-  float positionX = (-width/2) * cos(radians(translationAngle));
-  float positionY = (-width/2) * sin(radians(translationAngle));
+  translate(0, 0, 400);
+  image(BACKGROUND_IMAGE, 0, 0);
+  popMatrix();
+  
+  pushMatrix();
+  translate(width/2, height/2, 410);
+  float positionX = -110 * cos(radians(translationAngle));
+  float positionY = -110 * sin(radians(translationAngle));
   translate(positionX, positionY);
   shape(SUN);
   pointLight(red(backgroundColor), green(backgroundColor), blue(backgroundColor), positionX, positionY, 0);
   popMatrix();
   
   pushMatrix();
-  translate(width/2, height/2, 0);
-  rotateY(translationAngle);
-  box(100);
+  shape(TERRAIN);
   popMatrix();
 
   if (isMorning && interpolation > 1) {
