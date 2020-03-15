@@ -11,6 +11,8 @@ float INTERPOLATION_STEP = 0.001;
 PShape SUN;
 
 PShape TERRAIN;
+PShape TABLE;
+PShape BED;
 
 boolean isMorning = false;
 
@@ -23,8 +25,13 @@ void setup() {
   BACKGROUND_IMAGE = loadImage("bg.jpg");
   BACKGROUND_IMAGE.resize(width, height);
   TERRAIN = loadShape("medieval_house.obj");
+  TABLE = loadShape("table.obj");
+  BED = loadShape("cama.obj");
   TERRAIN.rotateX(PI);
-  TERRAIN.translate(width/2, height/2, 652);
+  TABLE.rotateX(PI);
+  BED.rotateX(PI);
+  TABLE.scale(0.0125);
+  BED.scale(2);
   SUN = createShape(SPHERE, 5);
   SUN.setTexture(loadImage("sun.jpg"));
   SUN.setStroke(false);
@@ -64,8 +71,17 @@ void draw() {
   pointLight(red(backgroundColor), green(backgroundColor), blue(backgroundColor), positionX, positionY, 0);
   popMatrix();
   
+  translate(width/2, height/2, 652);
+  
   pushMatrix();
   shape(TERRAIN);
+  translate(3, -1.5, 0);
+  shape(TABLE);
+  popMatrix();
+  
+  pushMatrix();
+  translate(-4.5, 0, 0);
+  shape(BED);
   popMatrix();
 
   if (isMorning && interpolation > 1) {
